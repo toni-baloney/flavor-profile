@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What is your Flavor Profile? | Swish</title>
+<meta name="description" content="11 questions, 1 very long Monday. Find out which ingredient you are: Cucumber, Shallot, Egg, Habanero or Potato.">
+<meta name="theme-color" content="#02323C">
+<meta property="og:title" content="What is your Flavor Profile?">
+<meta property="og:description" content="11 questions, 1 very long Monday. Find out which ingredient you are.">
+<meta property="og:type" content="website">
+<!-- After hosting, change this to the full URL, e.g. https://swishrobotics.github.io/flavor-profile/images/share-card.png -->
+<meta property="og:image" content="images/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2302323C'/%3E%3Cpath d='M13 8h13v4H12.4z' fill='%231DD8F8'/%3E%3Cpath d='M7.6 14H26v4H7z' fill='%2317A9C6'/%3E%3Cpath d='M10.6 20H26v4H10z' fill='%2312809A'/%3E%3C/svg%3E">
+<style>
+@font-face{font-family:"Zalando Sans";font-style:normal;font-weight:300;font-display:swap;src:url(fonts/zalando-sans-latin-300-normal.woff2) format("woff2")}
+@font-face{font-family:"Zalando Sans";font-style:normal;font-weight:800;font-display:swap;src:url(fonts/zalando-sans-latin-800-normal.woff2) format("woff2")}
+:root{
+  /* Swish Volume One */
+  --cream:#FFFCF2; --navy:#02323C; --navy-2:#132326;
+  --logo-dark:#12809A; --logo-med:#17A9C6; --logo-light:#1DD8F8;
+  --purple:#BF85FE; --green:#03A083; --yellow:#FFD447; --orange:#FF540A; --blue:#0386A0;
+  --l-purple:#E6D0FD; --l-green:#B2E4DB; --l-yellow:#FFF2C8; --l-orange:#FFD1B9; --l-blue:#BEE2E9;
+  --g300:#4D6166; --g400:#73888C; --g600:#CED7D9; --g700:#E1E9EB; --g800:#F0F4F5; --white:#FFFFFF;
+  /* roles */
+  --surface-page:var(--cream); --surface-raised:var(--white); --surface-inverse:var(--navy);
+  --content-primary:var(--navy); --content-secondary:var(--g300); --content-inverse:var(--cream);
+  --border-subtle:var(--g700); --border-default:var(--g600); --border-focus:var(--logo-dark);
+  --r:16px; --r-card:24px;
+  --shadow-1:0 1px 2px rgba(2,50,60,.08),0 2px 8px rgba(2,50,60,.06);
+  --shadow-2:0 2px 4px rgba(2,50,60,.10),0 8px 24px rgba(2,50,60,.10);
+  --ease-standard:cubic-bezier(.2,0,0,1); --ease-decel:cubic-bezier(0,0,0,1); --ease-accel:cubic-bezier(.3,0,1,1);
+  --accent:var(--green); --accent-l:var(--l-green);
+  font-family:"Zalando Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  letter-spacing:-0.03em;
+  color:var(--content-primary);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--surface-page);font-weight:300;font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;overflow:hidden;-webkit-tap-highlight-color:transparent}
+button{font:inherit;letter-spacing:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--border-focus);outline-offset:2px}
+.b{font-weight:800}
+
+/* app shell: phone column, centered on laptops */
+#app{position:relative;height:100vh;height:100dvh;max-width:480px;margin:0 auto;overflow:hidden}
+@media (min-width:600px){
+  body{background:var(--navy)}
+  #app{height:min(100dvh - 48px,900px);margin-top:max(24px,calc((100dvh - 900px)/2));border-radius:var(--r-card);box-shadow:0 24px 64px rgba(0,11,13,.45);background:var(--surface-page)}
+}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));visibility:hidden;opacity:0}
+.screen.on{visibility:visible;opacity:1}
+
+/* stripes (the swish) */
+.stripes{display:flex;flex-direction:column;gap:6px;align-items:flex-end;width:88px}
+.stripes i{display:block;height:12px;border-radius:3px;transform:skewX(-8deg)}
+.stripes i:nth-child(1){width:64%;background:var(--logo-light)}
+.stripes i:nth-child(2){width:100%;background:var(--logo-med)}
+.stripes i:nth-child(3){width:80%;background:var(--logo-dark)}
+.sweep i{animation:sweep 700ms var(--ease-decel) both}
+.sweep i:nth-child(2){animation-delay:60ms}.sweep i:nth-child(3){animation-delay:120ms}
+@keyframes sweep{from{transform:translateX(-140%) skewX(-8deg);opacity:0}to{transform:none skewX(-8deg);opacity:1}}
+
+/* buttons */
+.cta{display:flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:var(--r);background:var(--logo-light);color:var(--navy);font-weight:300;font-size:16px;transition:background 200ms var(--ease-standard),transform 100ms}
+.cta:hover{background:var(--cream)}
+.cta:active{transform:scale(.98);background:var(--logo-med)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 16px;border-radius:var(--r);background:var(--navy);color:var(--cream);font-size:16px;transition:background 200ms var(--ease-standard),transform 100ms}
+.btn:hover{background:var(--navy-2)}
+.btn:active{transform:scale(.98)}
+.btn-2{background:transparent;color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+.btn-2:hover{background:var(--g800)}
+.txtbtn{min-height:44px;min-width:44px;padding:0 8px;border-radius:12px;display:inline-flex;align-items:center;gap:4px;color:var(--content-secondary);font-size:16px}
+.txtbtn:hover{color:var(--navy)}
+
+/* ---------- intro ---------- */
+#intro{background:var(--surface-inverse);color:var(--content-inverse);justify-content:space-between;padding-top:max(48px,env(safe-area-inset-top))}
+.intro-mid{margin-block:auto}
+#intro .logo{width:112px;color:var(--cream)}
+.intro-mid{display:flex;flex-direction:column;gap:24px}
+.intro-mid h1{font-size:48px;line-height:1.05;font-weight:800;letter-spacing:-0.03em}
+.intro-mid h1 em{font-style:normal;color:var(--logo-light)}
+.intro-mid p{font-size:16px;color:var(--g700);max-width:32ch}
+.cast{display:flex;flex-wrap:wrap;gap:8px}
+.cast span{font-size:16px;padding:4px 12px;border-radius:999px;border:1px solid rgba(255,252,242,.28);display:inline-flex;align-items:center;gap:8px}
+.cast span::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
+.intro-foot{display:flex;flex-direction:column;gap:8px}
+.intro-foot small{font-size:16px;color:var(--g600);text-align:center}
+@media (max-height:680px){.intro-mid h1{font-size:40px}.intro-mid{gap:16px}}
+
+/* ---------- question ---------- */
+#quiz{gap:16px}
+.q-top{display:flex;align-items:center;gap:8px;min-height:44px}
+.q-top .logo{width:64px;color:var(--navy);margin-left:auto}
+.progress{display:flex;gap:4px;flex:0 0 auto}
+.bar{height:8px;border-radius:999px;background:var(--g700);overflow:hidden}
+.bar b{display:block;height:100%;width:0;background:var(--logo-dark);border-radius:999px;transition:width 300ms var(--ease-standard)}
+.q-meta{display:flex;align-items:center;justify-content:space-between;font-size:16px;color:var(--content-secondary)}
+.clock{display:inline-flex;align-items:center;gap:8px;font-weight:800;color:var(--navy);background:var(--surface-raised);border:1px solid var(--border-default);padding:4px 12px;border-radius:999px}
+.clock svg{width:16px;height:16px}
+.q-text{font-size:24px;line-height:1.25;font-weight:800;text-wrap:pretty}
+.q-text .ask{display:block;margin-top:8px;font-size:16px;font-weight:300;color:var(--content-secondary)}
+.answers{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px;justify-content:flex-end}
+.ans{flex:1 1 0;min-height:56px;max-height:112px;display:flex;align-items:center;gap:16px;text-align:left;padding:8px 16px;border-radius:var(--r);background:var(--surface-raised);border:1px solid var(--border-default);box-shadow:var(--shadow-1);font-size:16px;line-height:1.3;transition:background 100ms,border-color 100ms,transform 100ms,box-shadow 200ms}
+.ans .k{flex:0 0 32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--g800);color:var(--navy);font-weight:800;font-size:16px;transition:background 100ms,color 100ms}
+@media (hover:hover){.ans:hover{border-color:var(--navy);box-shadow:var(--shadow-2)}}
+.ans:active{transform:scale(.985)}
+.ans.picked{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+.ans.picked .k{background:var(--logo-light);color:var(--navy)}
+.answers.locked .ans{pointer-events:none}
+.enter .q-text{animation:rise 300ms var(--ease-decel) both}
+.enter .ans{animation:rise 300ms var(--ease-decel) both}
+.enter .ans:nth-child(1){animation-delay:40ms}.enter .ans:nth-child(2){animation-delay:75ms}
+.enter .ans:nth-child(3){animation-delay:110ms}.enter .ans:nth-child(4){animation-delay:145ms}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (min-height:800px){.q-text{font-size:32px;line-height:1.2}.ans{min-height:64px}}
+
+/* ---------- plating ---------- */
+#plating{align-items:center;justify-content:center;gap:24px;background:var(--surface-inverse);color:var(--content-inverse);text-align:center}
+#plating .stripes{width:120px}
+#plating .stripes i{height:16px}
+#plating h2{font-size:24px;font-weight:800}
+#plating p{color:var(--g600)}
+
+/* ---------- result ---------- */
+#result{gap:8px;padding-top:max(12px,env(safe-area-inset-top));justify-content:center}
+.r-head{display:flex;align-items:center;gap:16px;position:relative}
+.r-img{flex:0 0 auto;width:var(--img,120px);aspect-ratio:1;border-radius:50%;background:var(--accent-l);border:3px solid var(--accent);overflow:hidden;display:grid;place-items:center}
+.r-img img{width:100%;height:100%;object-fit:cover;display:block}
+.r-title{min-width:0;display:flex;flex-direction:column;gap:4px}
+.r-kicker{font-size:16px;color:var(--content-secondary)}
+.r-name{font-size:40px;max-width:100%;line-height:1;font-weight:800;position:relative;display:inline-block;align-self:flex-start}
+.r-name::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:8px;border-radius:4px;background:var(--accent);opacity:.9;z-index:-1;transform:skewX(-8deg)}
+.r-overall{font-size:16px;line-height:1.3;font-weight:800}
+.q-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.q-row .logo{width:56px;color:var(--cream);display:block}
+.traits{display:flex;flex-direction:column;gap:8px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:var(--r);padding:8px 16px;box-shadow:var(--shadow-1)}
+.trait{display:flex;flex-direction:column;font-size:16px;line-height:1.3}
+.trait .ic{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:16px;line-height:1}
+.trait.pos .ic{background:var(--l-green);color:var(--navy)}
+.trait.neg .ic{background:var(--l-orange);color:var(--navy)}
+.trait small{display:block;font-size:16px;font-weight:800;line-height:1.2}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1 1 auto;min-height:0;max-height:340px}
+.tile{border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden}
+.tile-meal{background:var(--accent-l);border:2px solid var(--accent);color:var(--navy);text-decoration:none;transition:transform 100ms,box-shadow 200ms}
+a.r-img{text-decoration:none;transition:transform 100ms,box-shadow 200ms}
+@media (hover:hover){.tile-meal:hover,a.r-img:hover{box-shadow:var(--shadow-2)}}
+.tile-meal:active,a.r-img:active{transform:scale(.98)}
+.tile-rel{background:var(--surface-raised);border:1px solid var(--border-default)}
+.tile .lbl{font-size:16px;line-height:1.2;color:var(--navy)}
+.meal-name{font-size:24px;line-height:1.1;font-weight:800}
+.meal-img{display:block;width:100%;flex:1 1 0;min-height:40px;max-height:200px;object-fit:contain}
+.prep{font-size:16px;line-height:1.2;color:var(--navy)}
+.rel{display:flex;flex-direction:column;gap:4px}
+.rel+.rel{padding-top:8px;border-top:1px solid var(--border-subtle)}
+.rel .who{display:flex;flex-wrap:wrap;gap:4px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:16px;padding:2px 10px 2px 6px;border-radius:999px;background:var(--pl);border:1.5px solid var(--pc)}
+.pill::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--pc)}
+.pill.none{background:var(--g800);border-color:var(--g600);padding-left:10px;font-weight:300}
+.pill.none::before{display:none}
+.quote{background:var(--surface-inverse);color:var(--content-inverse);border-radius:var(--r);padding:12px 16px;display:flex;flex-direction:column;gap:4px}
+.quote .lbl{font-size:16px;color:var(--logo-light)}
+.quote q{font-size:16px;line-height:1.3;font-weight:800;quotes:"\201C" "\201D"}
+.r-actions{display:flex;gap:8px}
+.r-actions .btn{flex:1}
+.logo-link{flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:var(--r);box-shadow:inset 0 0 0 1px var(--border-default);background:var(--surface-raised);color:var(--navy);transition:box-shadow 200ms,transform 100ms}
+.logo-link svg{width:88px!important}
+.logo-link:hover{box-shadow:inset 0 0 0 1px var(--navy)}
+.logo-link:active{transform:scale(.98)}
+.toast{position:absolute;left:50%;bottom:88px;transform:translate(-50%,16px);background:var(--navy);color:var(--cream);padding:8px 16px;border-radius:12px;font-size:16px;opacity:0;pointer-events:none;transition:opacity 200ms,transform 200ms var(--ease-decel);white-space:nowrap}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+/* taller phones get more room */
+@media (min-height:780px){#result{gap:12px}.r-img{--img:128px}.traits{padding:12px 16px}.tile{padding:16px}}
+@media (min-height:900px) and (min-width:430px){#result{gap:16px}.r-img{--img:152px}.r-name{font-size:48px}}
+/* short phones (iPhone SE) and short laptop windows */
+@media (max-height:700px){.r-img{--img:96px}.r-name{font-size:32px}.meal-name{font-size:24px}}
+@media (max-height:620px){.r-img{--img:80px}.trait{font-size:16px;line-height:1.2}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:1ms!important;animation-delay:0ms!important;transition-duration:1ms!important}
+}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite">
+
+  <!-- INTRO -->
+  <section class="screen on" id="intro" aria-labelledby="intro-h">
+    <div class="intro-mid">
+      <h1 id="intro-h">What is your <em>Flavor Profile?</em></h1>
+      <p>11 questions, 1 very long Monday. Find out what you truly crave to eat when life gets hard</p>
+    </div>
+    <div class="intro-foot">
+      <button class="cta" id="start">Start my Monday</button>
+    </div>
+  </section>
+
+  <!-- QUESTIONS -->
+  <section class="screen" id="quiz" aria-label="Question">
+    <div class="q-top">
+      <button class="txtbtn" id="back" aria-label="Previous question">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Back
+      </button>
+    </div>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="11" id="bar"><b></b></div>
+    <div class="q-meta"><span class="clock"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.6V8l2.4 1.6" stroke-linecap="round"/></svg><span id="time"></span></span><span id="count"></span></div>
+    <h2 class="q-text" id="qtext"></h2>
+    <div class="answers" id="answers" role="group" aria-labelledby="qtext"></div>
+  </section>
+
+  <!-- PLATING -->
+  <section class="screen" id="plating" aria-label="Calculating">
+    <div class="stripes" id="plateStripes" aria-hidden="true"><i></i><i></i><i></i></div>
+    <h2>Plating your results</h2>
+    <p>Ready in about 2 seconds</p>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="result" aria-labelledby="r-name">
+    <div class="r-head">
+      <a class="r-img" href="https://swishrobotics.com" target="_blank" rel="noopener" aria-label="Visit Swish Robotics"><img id="r-img" alt=""></a>
+      <div class="r-title">
+        <span class="r-kicker" id="r-kicker">Your flavor profile is</span>
+        <h1 class="r-name" id="r-name"></h1>
+        <p class="r-overall" id="r-overall"></p>
+      </div>
+    </div>
+
+    <div class="traits">
+      <div class="trait pos"><small>Sweet notes</small><span id="r-pos"></span></div>
+      <div class="trait neg"><small>Bitter notes</small><span id="r-neg"></span></div>
+    </div>
+
+    <div class="tiles">
+      <a class="tile tile-meal" href="https://swishrobotics.com" target="_blank" rel="noopener">
+        <span class="lbl">Favorite Swish meal</span>
+        <img class="meal-img" id="r-meal-img" alt="">
+        <span class="meal-name" id="r-meal"></span>
+        <span class="prep" id="r-prep"></span>
+      </a>
+      <div class="tile tile-rel">
+        <div class="rel"><span class="lbl">Favorite Coworker</span><div class="who" id="r-buddy"></div></div>
+        <div class="rel"><span class="lbl">Mortal Enemies</span><div class="who" id="r-enemy"></div></div>
+      </div>
+    </div>
+
+    <div class="quote"><q id="r-quote"></q></div>
+
+    <div class="r-actions">
+      <button class="btn" id="share">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+        <span>Share my profile</span>
+      </button>
+      <a class="logo-link" id="swishlink" href="https://swishrobotics.com" target="_blank" rel="noopener" aria-label="Visit Swish Robotics"><svg xmlns="http://www.w3.org/2000/svg" viewBox="19.52 34.46 62.90 15.98" aria-hidden="true" focusable="false" style="display:block;width:100%;height:auto"><path fill="#12809A" d="M 34.359375 50.238281 L 22.4375 50.238281 L 22.898438 47.214844 L 32.8125 47.214844 C 32.8125 48.265625 33.121094 49.117188 33.738281 49.746094 C 33.917969 49.929688 34.128906 50.09375 34.359375 50.238281 Z M 34.359375 50.238281 "/><path fill="#17A9C6" d="M 35.203125 46.347656 L 34.457031 46.445312 L 19.515625 46.445312 L 19.976562 43.425781 L 33.5 43.425781 C 33.449219 44.277344 33.652344 44.984375 34.101562 45.527344 C 34.371094 45.851562 34.738281 46.121094 35.203125 46.347656 Z M 35.203125 46.347656 "/><path fill="#1DD8F8" d="M 35.765625 39.632812 C 35.621094 39.714844 35.480469 39.796875 35.351562 39.886719 C 34.4375 40.523438 33.851562 41.453125 33.605469 42.65625 L 27.324219 42.65625 L 27.785156 39.632812 Z M 35.765625 39.632812 "/><path fill="currentColor" d="M 42.484375 44.722656 C 42.933594 45.246094 43.089844 45.949219 42.957031 46.832031 C 42.777344 47.988281 42.238281 48.878906 41.332031 49.503906 C 40.429688 50.128906 39.210938 50.441406 37.675781 50.441406 C 34.753906 50.441406 33.316406 49.339844 33.355469 47.136719 L 37.074219 46.648438 C 37.15625 47.097656 37.535156 47.320312 38.214844 47.320312 C 38.730469 47.320312 39.003906 47.234375 39.03125 47.058594 C 39.054688 46.894531 38.796875 46.75 38.261719 46.628906 L 36.859375 46.324219 C 35.730469 46.078125 34.949219 45.695312 34.519531 45.179688 C 34.089844 44.664062 33.945312 43.949219 34.082031 43.039062 C 34.453125 40.632812 36.1875 39.429688 39.28125 39.429688 C 40.910156 39.429688 42.0625 39.761719 42.742188 40.417969 L 43.039062 42.492188 L 39.734375 43 C 39.699219 42.617188 39.386719 42.429688 38.804688 42.429688 C 38.519531 42.429688 38.320312 42.460938 38.207031 42.53125 C 38.09375 42.597656 38.082031 42.683594 38.167969 42.785156 C 38.253906 42.886719 38.421875 42.972656 38.667969 43.039062 L 39.957031 43.40625 C 41.191406 43.761719 42.035156 44.199219 42.484375 44.722656 Z M 42.484375 44.722656 "/><path fill="currentColor" d="M 58.035156 39.632812 L 57.574219 42.640625 L 54.160156 50.238281 L 50.390625 50.238281 L 50.007812 46.484375 L 48.457031 50.238281 L 44.6875 50.238281 L 43.175781 39.632812 L 47.269531 39.632812 L 47.574219 43.628906 L 49.144531 39.632812 L 52.953125 39.632812 L 53.300781 43.609375 L 54.828125 39.632812 Z M 58.035156 39.632812 "/><path fill="currentColor" d="M 61.90625 42.957031 C 61.820312 43.496094 61.828125 43.980469 61.921875 44.414062 L 61.585938 46.605469 L 61.175781 46.660156 L 61.167969 47.128906 C 61.160156 47.582031 61.207031 48 61.3125 48.378906 L 61.027344 50.238281 L 56.957031 50.238281 L 58.582031 39.632812 L 62.65625 39.632812 L 62.382812 41.414062 C 62.152344 41.871094 61.992188 42.386719 61.902344 42.957031 Z M 61.90625 42.957031 "/><path fill="currentColor" d="M 63.464844 36.882812 C 63.363281 37.5625 63.042969 38.132812 62.511719 38.59375 C 61.976562 39.058594 61.367188 39.289062 60.671875 39.289062 C 59.980469 39.289062 59.457031 39.058594 59.058594 38.59375 C 58.660156 38.132812 58.515625 37.5625 58.617188 36.882812 C 58.722656 36.1875 59.046875 35.609375 59.585938 35.148438 C 60.125 34.6875 60.734375 34.457031 61.414062 34.457031 C 62.09375 34.457031 62.648438 34.6875 63.039062 35.148438 C 63.429688 35.609375 63.574219 36.1875 63.464844 36.882812 Z M 63.464844 36.882812 "/><path fill="currentColor" d="M 66.523438 42.785156 C 66.609375 42.886719 66.773438 42.972656 67.023438 43.039062 L 68.3125 43.40625 C 69.546875 43.757812 70.390625 44.195312 70.839844 44.722656 C 70.992188 44.898438 71.109375 45.097656 71.191406 45.316406 L 70.710938 48.460938 C 70.449219 48.863281 70.105469 49.210938 69.6875 49.503906 C 68.785156 50.128906 67.5625 50.441406 66.03125 50.441406 C 63.109375 50.441406 61.671875 49.339844 61.710938 47.136719 L 65.429688 46.648438 C 65.511719 47.097656 65.890625 47.320312 66.570312 47.320312 C 67.085938 47.320312 67.359375 47.230469 67.386719 47.054688 C 67.410156 46.890625 67.152344 46.75 66.617188 46.628906 L 65.21875 46.320312 C 64.085938 46.078125 63.308594 45.695312 62.875 45.179688 C 62.445312 44.664062 62.300781 43.949219 62.441406 43.039062 C 62.808594 40.632812 64.542969 39.429688 67.636719 39.429688 C 70.078125 39.429688 71.449219 40.167969 71.757812 41.640625 L 71.632812 42.457031 L 68.089844 42.996094 C 68.054688 42.617188 67.742188 42.425781 67.160156 42.425781 C 66.875 42.425781 66.675781 42.460938 66.5625 42.527344 C 66.449219 42.59375 66.4375 42.679688 66.523438 42.78125 Z M 66.523438 42.785156 "/><path fill="currentColor" d="M 82.246094 43.363281 L 81.191406 50.238281 L 77.117188 50.238281 L 78.019531 44.34375 C 78.074219 44.003906 78.019531 43.714844 77.859375 43.476562 C 77.699219 43.238281 77.472656 43.121094 77.1875 43.121094 C 76.902344 43.121094 76.625 43.234375 76.394531 43.46875 C 76.160156 43.699219 76.015625 43.992188 75.964844 44.34375 L 75.058594 50.238281 L 70.984375 50.238281 L 73.332031 34.945312 L 77.40625 34.945312 L 76.578125 40.328125 C 77.308594 39.730469 78.136719 39.429688 79.058594 39.429688 C 80.078125 39.429688 80.910156 39.8125 81.554688 40.574219 C 82.183594 41.320312 82.414062 42.253906 82.246094 43.363281 Z M 82.246094 43.363281 "/></svg></a>
+    </div>
+    <div class="toast" id="toast" role="status">Link copied</div>
+  </section>
+</main>
+
+<script>
+/* =====================================================================
+   CONTENT  — edit here
+   To swap in final character art, replace the files in /images
+   (or change the `image` paths below, e.g. "images/cucumber.png").
+   ===================================================================== */
+const PROFILES = {
+  cucumber: {
+    name: "Cucumber", color: "var(--green)", light: "var(--l-green)",
+    image: "images/cucumber.svg", mealImage: "images/meals/pad-see-ew.svg", prep: "15 min",
+    overall: "Caffeinated • Charismatic • Win-or-win-more team leader",
+    positive: "Strategic • Organized • Motivating • Ambitious • Multidisciplinary",
+    negative: "Over-planning • Hyper-competitive • Task-happy • Meeting-generating",
+    meal: "Pad see ew",
+    buddies: ["shallot"], enemies: ["habanero"],
+    quote: "I either win, or I win more"
+  },
+  egg: {
+    name: "Egg", color: "var(--yellow)", light: "var(--l-yellow)",
+    image: "images/egg.svg", mealImage: "images/meals/mango-habanero-chicken.svg", prep: "20 min",
+    overall: "Deeply curious • Electrolyte-powered • Quiet problem-solving wizard",
+    positive: "Observant • Scientific • Technically sharp • Dependable • Quietly caring",
+    negative: "Overthinking • Perfectionistic • Privately concerned • Suddenly unreachable",
+    meal: "Mango habanero chicken",
+    buddies: ["potato"], enemies: ["habanero"],
+    quote: "Hold my protein shake, I’m gonna science the sh*t out of this"
+  },
+  shallot: {
+    name: "Shallot", color: "var(--purple)", light: "var(--l-purple)",
+    image: "images/shallot.svg", mealImage: "images/meals/shrimp-fajitas.svg", prep: "12 min",
+    overall: "Warm-hearted • Snack-powered • Playfully competitive team catalyst",
+    positive: "Collaborative • Inclusive • Quietly bold • Fast-learning • Design-intuitive",
+    negative: "Over-giving • Conflict-smoothing • Secretly particular • Chronic Claude-babysitter",
+    meal: "Shrimp fajitas",
+    buddies: ["cucumber"], enemies: ["habanero"],
+    quote: "What do you mean ‘go home, it’s late’? The office is my home"
+  },
+  habanero: {
+    name: "Habanero", color: "var(--orange)", light: "var(--l-orange)",
+    image: "images/habanero.svg", mealImage: "images/meals/beef-chili.svg", prep: "25 min",
+    overall: "Self-sufficient • Sugar-fueled • Relentless execution machine",
+    positive: "Independent • Decisive • Disciplined • Highly capable • Spatially sharp",
+    negative: "Impatient • Stubbornly solo • Delegation-averse • Bluntly efficient",
+    meal: "Beef chili",
+    buddies: [], enemies: ["cucumber"],
+    quote: "Ok team, Father has returned, stupid time is over now"
+  },
+  potato: {
+    name: "Potato", color: "var(--blue)", light: "var(--l-blue)",
+    image: "images/potato.svg", mealImage: "images/meals/chicken-tikka-masala.svg", prep: "22 min",
+    overall: "Human engineering manual • Measures twice • Corrects everyone three times",
+    positive: "Knowledgeable • Precise • Methodical • Thorough • Technically rigorous • Insightful",
+    negative: "Pedantic • Overexplaining • Perfectionistic • Quietly superior • Correction-prone",
+    meal: "Chicken tikka masala",
+    buddies: ["egg"], enemies: ["habanero"],
+    quote: "Bold of you to force-push your mistakes directly to main."
+  }
+};
+
+/* Each answer: t = text, p = profile it scores for, d = dietary data point recorded */
+const QUESTIONS = [
+  { id:"portion", time:"8:53am",
+    q:"Alarm blaring. You wake up. It’s Monday. 8:53am. All-hands is at 9:00.", ask:"Do you:",
+    a:[ {t:"Make your usual breakfast (eggs, bacon, pancakes, OJ) and take all-hands from the kitchen", p:"cucumber", d:"Large"},
+        {t:"Grab a Greek yogurt tub and eat it on the 9R bus", p:"egg", d:"Moderate"},
+        {t:"Hit Arsicault for a chocolate almond croissant even though it’s not your cheat day", p:"habanero", d:"Small + treat"},
+        {t:"There’s protein in the office granola bars, right?", p:"shallot", d:"Grazer"} ] },
+  { id:"tiebreak", time:"9:04am",
+    q:"You slide into all-hands 4 minutes late. The CEO announces Project Umami: an AI-powered, cross-functional flavor initiative with no scope, no budget and a Friday deadline. Who wants it?", ask:"",
+    a:[ {t:"Hand up. I’ve already named the Slack channel.", p:"cucumber"},
+        {t:"“I’ll take it, but I’m doing it solo.”", p:"habanero"},
+        {t:"“Can I see the spec first? And the spec for the spec?”", p:"potato"},
+        {t:"“Let’s do it together! I’ll set up a kickoff. With snacks.”", p:"shallot"} ] },
+  { id:"allergies", time:"10:30am",
+    q:"Someone brought homemade birthday brownies to the kitchen.", ask:"Before you grab one:",
+    a:[ {t:"No hesitation. My stomach fears nothing.", p:"habanero", d:"None"},
+        {t:"No hesitation. My stomach fears nothing, but I will regret it later", p:"egg", d:"Intolerance"},
+        {t:"Ask the baker for the full ingredient list and cross-reference it.", p:"potato", d:"True allergy"},
+        {t:"Grab one for me and one for my bestie stuck in meetings.", p:"shallot", d:"None"} ] },
+  { id:"cuisine1", time:"12:15pm",
+    q:"Team lunch, and you’re picking the spot.", ask:"Where to?",
+    a:[ {t:"The taqueria with a 4.9 on your Beli", p:"egg", d:"Mexican/Latin"},
+        {t:"Thai Spice. You’ve already pre-ordered for the table.", p:"cucumber", d:"Thai/SE Asian"},
+        {t:"Zareens. You have a plating system.", p:"potato", d:"Indian"},
+        {t:"The smokehouse next door. Brisket. Don’t ask questions.", p:"habanero", d:"American/BBQ"} ] },
+  { id:"spice", time:"12:40pm",
+    q:"Food arrives. The hot sauce caddy is staring at you.", ask:"",
+    a:[ {t:"None. It’s seasoned how the chef intended.", p:"potato", d:"Mild"},
+        {t:"A few dashes of the medium one", p:"shallot", d:"Medium"},
+        {t:"Taste-test all five and rank them by Scoville", p:"egg", d:"Hot"},
+        {t:"Ask the kitchen for the secret one they don’t put out", p:"habanero", d:"Extra hot"} ] },
+  { id:"macros", time:"3:00pm",
+    q:"The 3pm slump hits. You stroll to the snack wall.", ask:"You grab:",
+    a:[ {t:"Protein bar + jerky. Gains don’t take PTO.", p:"egg", d:"Protein-maxxing"},
+        {t:"Unsalted almonds and a sparkling water", p:"potato", d:"Low sodium"},
+        {t:"I need a Yerba to chase my espresso", p:"cucumber", d:"Caffeine-fueled"},
+        {t:"One of everything. Grazing is a lifestyle.", p:"shallot", d:"No tracking"} ] },
+  { id:"health", time:"5:45pm",
+    q:"You log off.", ask:"After-work plan:",
+    a:[ {t:"Lifting. It’s chest day, and every day is chest day.", p:"habanero", d:"Muscle building"},
+        {t:"Run club: 5K and a group selfie", p:"shallot", d:"Heart health"},
+        {t:"Pilates and an early bedtime. Sleep score must be 90+.", p:"egg", d:"Better sleep"},
+        {t:"The pickleball league you started. You’re also the commissioner.", p:"cucumber", d:"Energy/weight management"} ] },
+  { id:"diet", time:"6:30pm",
+    q:"Quick Grocery Outlet run.", ask:"What’s in your cart?",
+    a:[ {t:"Steak, ground beef, eggs, butter. Plants are what food eats.", p:"habanero", d:"Carnivore"},
+        {t:"A bit of everything: chicken, salmon, veggies, rice", p:"cucumber", d:"Omnivore"},
+        {t:"Salmon, shrimp, and a mountain of veggies. Omega-3s are brain fuel.", p:"egg", d:"Pescatarian"},
+        {t:"Tofu, lentils, oat milk, and all the produce", p:"potato", d:"Vegetarian/Vegan"} ] },
+  { id:"cooking", time:"8:30pm",
+    q:"You finally get home and sink into that IKEA POÄNG armchair you thrifted off Marketplace for $17. Your stomach growls.", ask:"",
+    a:[ {t:"Order tikka masala on Uber Eats", p:"shallot", d:"Delivery"},
+        {t:"Reheat your meal-prepped tortillas and ground beef", p:"cucumber", d:"Meal prep"},
+        {t:"Make that 2 hour bake, 7 cheese lasagna bolognese you saw on IG", p:"potato", d:"From scratch"},
+        {t:"Barebells protein bar with peanut butter", p:"habanero", d:"Quick fuel"} ] },
+  { id:"cuisine2", time:"11:00pm",
+    q:"You’re doomscrolling food TikTok.", ask:"Which video stops you?",
+    a:[ {t:"A 20-course omakase / Korean BBQ sizzle", p:"cucumber", d:"Japanese/Korean"},
+        {t:"A nonna hand-rolling pasta to the millimeter", p:"potato", d:"Italian"},
+        {t:"A giant mezze and shawarma spread for 12", p:"shallot", d:"Mediterranean/Middle Eastern"},
+        {t:"The physics of hand-pulled noodles and soup dumplings", p:"egg", d:"Chinese"} ] },
+  { id:"tracking", time:"11:45pm",
+    q:"Lights out.", ask:"What’s tomorrow’s food plan?",
+    a:[ {t:"It’s already in your Google Sheet, color-coded by macro", p:"cucumber", d:"Strict planner"},
+        {t:"Your app, smart scale, and sleep ring will tell you", p:"egg", d:"Data-driven"},
+        {t:"Tomorrow’s problem. You’ll know when you’re hungry.", p:"habanero", d:"Intuitive"},
+        {t:"Whatever the group chat decides for brunch", p:"shallot", d:"Social eater"} ] }
+];
+/* Tie-break: the first question in this order whose answer belongs to a tied profile wins */
+const TIEBREAK_ORDER = ["tiebreak","portion","tracking","cooking","health","diet","macros","spice","cuisine1","cuisine2","allergies"];
+
+/* ===================================================================== */
+const $ = s => document.querySelector(s);
+const screens = {intro:$("#intro"), quiz:$("#quiz"), plating:$("#plating"), result:$("#result")};
+let idx = 0, picks = [];
+
+function show(name){
+  Object.values(screens).forEach(s => s.classList.remove("on"));
+  screens[name].classList.add("on");
+}
+
+function renderQuestion(){
+  const Q = QUESTIONS[idx];
+  $("#time").textContent = Q.time;
+  $("#count").textContent = `${idx+1} of ${QUESTIONS.length}`;
+  $("#bar b").style.width = `${(idx/QUESTIONS.length)*100}%`;
+  $("#bar").setAttribute("aria-valuenow", idx);
+  $("#qtext").innerHTML = "";
+  $("#qtext").append(Q.q);
+  if (Q.ask){ const s=document.createElement("span"); s.className="ask"; s.textContent=Q.ask; $("#qtext").append(s); }
+  const box = $("#answers"); box.innerHTML=""; box.classList.remove("locked");
+  Q.a.forEach((ans,i)=>{
+    const b=document.createElement("button");
+    b.className="ans"+(picks[idx]===i?" picked":"");
+    b.innerHTML=`<span class="k" aria-hidden="true">${"ABCD"[i]}</span><span></span>`;
+    b.lastChild.textContent=ans.t;
+    b.addEventListener("click",()=>choose(i,b));
+    box.append(b);
+  });
+  $("#back").style.visibility = "visible";
+  screens.quiz.classList.remove("enter"); void screens.quiz.offsetWidth; screens.quiz.classList.add("enter");
+}
+
+function choose(i,btn){
+  const box=$("#answers"); if(box.classList.contains("locked")) return;
+  box.classList.add("locked");
+  box.querySelectorAll(".ans").forEach(b=>b.classList.remove("picked"));
+  btn.classList.add("picked");
+  picks[idx]=i;
+  setTimeout(()=>{
+    if(idx<QUESTIONS.length-1){ idx++; renderQuestion(); }
+    else finish();
+  }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 120 : 280);
+}
+
+function score(){
+  const tally={}; Object.keys(PROFILES).forEach(k=>tally[k]=0);
+  QUESTIONS.forEach((Q,i)=>{ const a=Q.a[picks[i]]; if(a&&a.p) tally[a.p]++; });
+  const max=Math.max(...Object.values(tally));
+  const tied=Object.keys(tally).filter(k=>tally[k]===max);
+  if(tied.length===1) return {winner:tied[0],tally};
+  for(const qid of TIEBREAK_ORDER){
+    const qi=QUESTIONS.findIndex(q=>q.id===qid); const a=QUESTIONS[qi].a[picks[qi]];
+    if(a&&tied.includes(a.p)) return {winner:a.p,tally};
+  }
+  return {winner:tied[0],tally};
+}
+
+/* Dietary answers stay in the browser for now (window.flavorProfile) */
+function dietProfile(){
+  const out={}; QUESTIONS.forEach((Q,i)=>{ const a=Q.a[picks[i]]; if(a&&a.d) out[Q.id]=a.d; }); return out;
+}
+
+function finish(){
+  $("#bar b").style.width="100%";
+  const {winner,tally}=score();
+  window.flavorProfile={profile:winner, scores:tally, diet:dietProfile()};
+  show("plating");
+  const st=$("#plateStripes"); st.classList.remove("sweep"); void st.offsetWidth; st.classList.add("sweep");
+  setTimeout(()=>{ renderResult(winner,false); try{history.replaceState(null,"","#"+winner);}catch(e){} }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 1800);
+}
+
+function pill(key){
+  const s=document.createElement("span");
+  if(!key){ s.className="pill none"; s.textContent="None. Rides solo"; return s; }
+  const P=PROFILES[key]; s.className="pill"; s.textContent=P.name;
+  s.style.setProperty("--pc",P.color); s.style.setProperty("--pl",P.light); return s;
+}
+
+function renderResult(key,shared){
+  const P=PROFILES[key];
+  const R=screens.result;
+  R.style.setProperty("--accent",P.color); R.style.setProperty("--accent-l",P.light);
+  const img=$("#r-img"); img.src=P.image; img.alt=`${P.name} character`;
+  $("#r-kicker").textContent = shared ? "Your friend’s flavor profile is" : "Your flavor profile is";
+  $("#r-name").textContent=P.name;
+  const nb=(el,t)=>{ el.innerHTML=""; t.split(" • ").forEach((w,i,a)=>{ const s=document.createElement("span"); if(!w.includes(" ")) s.style.whiteSpace="nowrap"; s.textContent=w+(i<a.length-1?"\u00a0•":""); el.append(s); if(i<a.length-1) el.append(" "); }); };
+  nb($("#r-overall"),P.overall);
+  nb($("#r-pos"),P.positive);
+  nb($("#r-neg"),P.negative);
+  $("#r-meal").textContent=P.meal;
+  $("#r-prep").textContent="Prep time: "+P.prep;
+  const mi=$("#r-meal-img"); mi.src=P.mealImage; mi.alt=P.meal;
+  const b=$("#r-buddy"), e=$("#r-enemy"); b.innerHTML=""; e.innerHTML="";
+  (P.buddies.length?P.buddies:[null]).forEach(k=>b.append(pill(k)));
+  (P.enemies.length?P.enemies:[null]).forEach(k=>e.append(pill(k)));
+  $("#r-quote").textContent=P.quote;
+  $("#share span").textContent = shared ? "Find my profile" : "Share my profile";
+  R.dataset.shared = shared ? "1" : "";
+  R.dataset.key = key;
+  show("result");
+}
+
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); setTimeout(()=>t.classList.remove("on"),2000); }
+
+async function share(){
+  const R=screens.result;
+  if(R.dataset.shared){ restart(); return; }
+  const P=PROFILES[R.dataset.key];
+  const url=location.href.split("#")[0]+"#"+R.dataset.key;
+  const text=`I got ${P.name} on Swish’s Flavor Profile test: ${P.overall.split(" • ").slice(0,2).join(", ").toLowerCase()} and apparently my Mortal Enemy is ${P.enemies.map(k=>PROFILES[k].name).join(", ")}. What’s yours?`;
+  if(navigator.share){
+    try{ await navigator.share({title:"What is your Flavor Profile?", text, url}); return; }
+    catch(e){ if(e && e.name==="AbortError") return; }
+  }
+  try{ await navigator.clipboard.writeText(text+" "+url); toast("Link copied. Paste it in the group chat"); }
+  catch(e){ toast("Copy this link: "+url); }
+}
+
+function restart(){
+  idx=0; picks=[]; try{history.replaceState(null,"",location.pathname+location.search);}catch(e){}
+  show("quiz"); renderQuestion();
+}
+
+$("#start").addEventListener("click",()=>{ idx=0; picks=[]; show("quiz"); renderQuestion(); });
+$("#back").addEventListener("click",()=>{ if(idx>0){ idx--; renderQuestion(); } else show("intro"); });
+$("#share").addEventListener("click",share);
+
+/* Laptop: number keys 1–4 or A–D pick an answer */
+document.addEventListener("keydown",e=>{
+  if(!screens.quiz.classList.contains("on")||e.metaKey||e.ctrlKey||e.altKey) return;
+  const map={"1":0,"2":1,"3":2,"4":3,a:0,b:1,c:2,d:3}; const i=map[e.key.toLowerCase()];
+  const btns=document.querySelectorAll("#answers .ans");
+  if(i!==undefined&&btns[i]) btns[i].click();
+  if(e.key==="Backspace"||e.key==="ArrowLeft") $("#back").click();
+});
+
+/* Shared links: /#egg opens that result */
+const h=location.hash.slice(1).toLowerCase();
+if(PROFILES[h]) renderResult(h,true);
+</script>
+</body>
+</html>
